@@ -28,13 +28,12 @@ class TransactionChecker {
                 try {
                     let tx = await this.web3.eth.getTransaction(txHash);
                     if (tx != null) {
-                        if (this.account == tx.to.toLowerCase()) {
+                        if (tx.to && this.account == tx.to.toLowerCase()) {
                             const WebhookId = this.account
                             let address =  tx.from
                             let value = this.web3.utils.fromWei(tx.value, 'ether')
                             var time =  new Date();
-                            console.log(address,value,time)
-                            WebSocketService.sendToOneClient(userId, {
+                            WebSocketService.sendToAllClient({
                                 action: "transaction",
                                 data: {
                                     WebhookId: WebhookId,
@@ -67,6 +66,6 @@ class TransactionChecker {
     }
 }
 
-let txChecker = new TransactionChecker(process.env.INFURA_ID, '0x9e5B17d8D46B4Ba4e5F82A91628C27Fd162EbA2b');
+let txChecker = new TransactionChecker(process.env.INFURA_ID, '0xD2d194294efbCa23972f6B6415B57ABA3F31B7Af');
 txChecker.subscribe('pendingTransactions');
 txChecker.watchTransactions();

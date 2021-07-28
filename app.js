@@ -15,10 +15,10 @@ const apiLimiter = rateLimit({
 
 require("./bot")
 
-app.use(cors())
-    app.listen(5000, function () {
-    console.log('CORS-enabled web server listening on port 5000')
-})
+// app.use(cors())
+//     app.listen(5000, function () {
+//     console.log('CORS-enabled web server listening on port 5000')
+// })
 
 require("./services/ws.service").connect(process.env.WS_PORT)
 
