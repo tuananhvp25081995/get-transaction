@@ -1,6 +1,7 @@
 const Web3 = require('web3');
 require('dotenv').config()
 const axios = require("axios").default;
+const WebSocketService = require("./services/ws.service");
 
 class TransactionChecker {
     web3;
@@ -33,19 +34,29 @@ class TransactionChecker {
                             let value = this.web3.utils.fromWei(tx.value, 'ether')
                             var time =  new Date();
                             console.log(address,value,time)
-                            axios
-                                .post(`http://localhost:3001/webhook/hook-bsc/${WebhookId}`, {
-                                    address,
-                                    value,
-                                    time
-                                })
-                                .then(function (response) {
-                                    result = response.data;
-                                    console.log("ok", result);
-                                })
-                                .catch(function (error) {
-                                    console.error(error);
-                                });
+                            WebSocketService.sendToOneClient(userId, {
+                                action: "transaction",
+                                data: {
+                                    WebhookId: WebhookId,
+                                    address: address,
+                                    value: value,
+                                    time: time
+                                }
+                            });
+
+                            // axios
+                            //     .post(`http://localhost:3001/webhook/hook-bsc/${WebhookId}`, {
+                            //         address,
+                            //         value,
+                            //         time
+                            //     })
+                            //     .then(function (response) {
+                            //         result = response.data;
+                            //         console.log("ok", result);
+                            //     })
+                            //     .catch(function (error) {
+                            //         console.error(error);
+                            //     });
                         }
                     }
                 } catch (err) {

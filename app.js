@@ -20,4 +20,6 @@ app.use(cors())
     console.log('CORS-enabled web server listening on port 5000')
 })
 
+require("./services/ws.service").connect(process.env.WS_PORT)
+
 module.exports = app
