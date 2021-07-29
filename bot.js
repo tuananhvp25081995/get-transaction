@@ -29,33 +29,19 @@ class TransactionChecker {
                     let tx = await this.web3.eth.getTransaction(txHash);
                     if (tx != null) {
                         if (tx.to && this.account == tx.to.toLowerCase()) {
-                            const WebhookId = this.account
+                            let wsID = this.account
                             let address =  tx.from
                             let value = this.web3.utils.fromWei(tx.value, 'ether')
                             var time =  new Date();
                             WebSocketService.sendToAllClient({
                                 action: "transaction",
                                 data: {
-                                    WebhookId: WebhookId,
+                                    wsID: wsID,
                                     address: address,
                                     value: value,
                                     time: time
                                 }
                             });
-
-                            // axios
-                            //     .post(`http://localhost:3001/webhook/hook-bsc/${WebhookId}`, {
-                            //         address,
-                            //         value,
-                            //         time
-                            //     })
-                            //     .then(function (response) {
-                            //         result = response.data;
-                            //         console.log("ok", result);
-                            //     })
-                            //     .catch(function (error) {
-                            //         console.error(error);
-                            //     });
                         }
                     }
                 } catch (err) {

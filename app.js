@@ -6,14 +6,14 @@ const rateLimit = require("express-rate-limit");
 const app = express();
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
-
+const eventRouter = require("./routes/event")
 const apiLimiter = rateLimit({
     windowMs: 10 * 1000,
     max: 1,
     message: "Too many request, please slowly"
 });
 
-require("./bot")
+// require("./bot")
 
 // app.use(cors())
 //     app.listen(5000, function () {
@@ -21,5 +21,6 @@ require("./bot")
 // })
 
 require("./services/ws.service").connect(process.env.WS_PORT)
+app.use('/', eventRouter);
 
 module.exports = app
