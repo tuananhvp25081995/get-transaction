@@ -2,56 +2,43 @@ const Web3 = require('web3');
 require('dotenv').config()
 const axios = require("axios").default;
 const WebSocketService = require("./services/ws.service");
+const event = require("./controllers/eventController")
+let Websocket = require('ws')
+const web3 = new Web3();
+web3.setProvider(new web3.providers.WebsocketProvider('wss://speedy-nodes-nyc.moralis.io/9350000a43e8c70ad1fe86db/bsc/testnet/ws'));
+// const web3ws = new Web3(new Web3.providers.WebsocketProvider('wss://data-seed-prebsc-1-s1.binance.org:8545/'));
+// const web3 = new Web3(new Web3.providers.HttpProvider('https://data-seed-prebsc-1-s1.binance.org:8545/'));
 
-class TransactionChecker {
-    web3;
-    web3ws;
-    account;
-    subscription;
-
-    constructor(projectId, account) {
-        this.web3ws = new Web3(new Web3.providers.WebsocketProvider('wss://data-seed-prebsc-1-s1.binance.org:8545/'));
-        this.web3 = new Web3(new Web3.providers.HttpProvider('https://data-seed-prebsc-1-s1.binance.org:8545/'));
-        this.account = account.toLowerCase();
-    }
-
-    subscribe(topic) {
-        this.subscription = this.web3ws.eth.subscribe(topic, (err, res) => {
-            if (err) console.error(err);
-        });
-    }
-
-    watchTransactions() {
-        console.log('Watching all pending transactions...');
-        this.subscription.on('data', (txHash) => {
-            setTimeout(async () => {
-                try {
-                    let tx = await this.web3.eth.getTransaction(txHash);
-                    if (tx != null) {
-                        if (tx.to && this.account == tx.to.toLowerCase()) {
-                            let wsID = this.account
-                            let address =  tx.from
-                            let value = this.web3.utils.fromWei(tx.value, 'ether')
-                            var time =  new Date();
-                            WebSocketService.sendToAllClient({
-                                action: "transaction",
-                                data: {
-                                    wsID: wsID,
-                                    address: address,
-                                    value: value,
-                                    time: time
-                                }
-                            });
+let wss;
+let wsID;
+let address;
+let value;
+var time;
+wss = new Websocket.Server({ port: 8081 });
+wss.once('connection', function (ws, req) {
+    ws.once('message', function incoming(message) {
+        // pendingTransactions
+        web3.eth.subscribe('pendingTransactions', function(error, result){
+        })
+        .on("data", function(transaction){
+        web3.eth.getTransaction(transaction)
+            .then(res => {
+                if (res && res.to === message) {
+                    wsID = res.to
+                    address =  res.from
+                    value = web3.utils.fromWei(res.value, 'ether')
+                    time =  new Date();
+                    WebSocketService.sendToAllClient({
+                        action: "transaction",
+                        data: {
+                            wsID: wsID,
+                            address: address,
+                            value: value,
+                            time: time
                         }
-                    }
-                } catch (err) {
-                    console.error(err);
+                    });
                 }
-            }, 15000)
+            });
         });
-    }
-}
-
-let txChecker = new TransactionChecker(process.env.INFURA_ID, '0xD2d194294efbCa23972f6B6415B57ABA3F31B7Af');
-txChecker.subscribe('pendingTransactions');
-txChecker.watchTransactions();
+    })
+})

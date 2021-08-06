@@ -21,6 +21,9 @@ WebSocketService.connect = (port) => {
             delete webSockets[userID][ws.id]
             console.log('deleted: ' + userID)
         })
+        // ws.on('message', function incoming(message) {
+        //     console.log('received: %s', message);
+        // })
     })
     wss.on('error', (err) => {
         console.log(err)

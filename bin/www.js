@@ -1,7 +1,7 @@
 var app = require('../app');
 var http = require('http');
 require('dotenv').config()
-require("../model/mongo-db")
+
 var port = process.env.PORT || 3001;
 app.set('port', port);
 

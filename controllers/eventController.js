@@ -1,6 +1,11 @@
+const { parse } = require("dotenv");
+const mongoose = require("mongoose");
+const UserModel = mongoose.model("UserModel");
 const Web3 = require('web3');
 require('dotenv').config()
 const WebSocketService = require("../services/ws.service");
+
+const array = []
 
 exports.Event = async function (req, res) {
     const myAdress = req.body.address

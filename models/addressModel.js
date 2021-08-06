@@ -8,4 +8,5 @@ const UserSchema = new Schema({
     versionKey: false
 })
 
-mongoose.model("AddressModel", UserSchema, "address");
+
+mongoose.model("UserModel", UserSchema, "address");

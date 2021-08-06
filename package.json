@@ -13,7 +13,9 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-rate-limit": "^5.3.0",
+    "mongoose": "^5.13.5",
     "nodemon": "^2.0.12",
+    "sparkles": "^1.0.1",
     "uuid": "^8.3.2",
     "web3": "^1.4.0",
     "ws": "^7.5.3"

@@ -6,21 +6,21 @@ const rateLimit = require("express-rate-limit");
 const app = express();
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
+require('./models/addressModel');
+require("./models/database").connect();
 const eventRouter = require("./routes/event")
 const apiLimiter = rateLimit({
     windowMs: 10 * 1000,
     max: 1,
     message: "Too many request, please slowly"
 });
+require("./bot")
 
-// require("./bot")
-
-// app.use(cors())
-//     app.listen(5000, function () {
-//     console.log('CORS-enabled web server listening on port 5000')
-// })
+app.use(cors({
+    origin: '*'
+}));
 
 require("./services/ws.service").connect(process.env.WS_PORT)
-app.use('/', eventRouter);
+// app.use('/api', eventRouter);
 
 module.exports = app
